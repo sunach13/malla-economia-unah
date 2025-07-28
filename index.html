@@ -1,27 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Malla Curricular de Economía</title>
+  <meta charset="UTF-8">
+  <title>Malla Interactiva - Economía UNAH</title>
   <style>
-    body { font-family: Arial; padding: 2rem; background: #f7f7f7; }
-    h1 { color: #2b2b2b; }
-    .materia {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 1rem;
-      margin: 0.5rem;
-      background-color: #ffffff;
-      display: inline-block;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      margin: 20px;
     }
-    .aprobada { background-color: #b6f7b0; }
-    .en-curso { background-color: #fff89e; }
+    h1 {
+      text-align: center;
+      color: #d63384;
+    }
+    .semestre {
+      border: 2px solid #f8bbd0;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px auto;
+      max-width: 800px;
+      background-color: #ffe6f0;
+    }
+    .semestre h2 {
+      color: #b03060;
+    }
+    .materias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .materia {
+      background-color: #fcd5ce;
+      border: 1px solid #f8c1cc;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .materia:hover {
+      background-color: #f8c1cc;
+    }
   </style>
 </head>
 <body>
-  <h1>Malla Curricular de Economía</h1>
-  <div class="materia aprobada">Intro a la Economía</div>
-  <div class="materia aprobada">Matemáticas I</div>
-  <div class="materia en-curso">Microeconomía I</div>
-  <div class="materia">Macroeconomía I</div>
+  <h1>Malla Curricular - Economía UNAH</h1>
+
+  <div class="semestre">
+    <h2>Primer Período</h2>
+    <div class="materias">
+      <div class="materia">Matemática I</div>
+      <div class="materia">Contabilidad I</div>
+      <div class="materia">Introducción a la Economía</div>
+      <div class="materia">Español General</div>
+    </div>
+  </div>
+
+  <div class="semestre">
+    <h2>Segundo Período</h2>
+    <div class="materias">
+      <div class="materia">Matemática II</div>
+      <div class="materia">Contabilidad II</div>
+      <div class="materia">Microeconomía I</div>
+      <div class="materia">Historia Económica de Honduras</div>
+    </div>
+  </div>
+
+  <!-- Puedes seguir agregando más periodos aquí -->
+
 </body>
 </html>
