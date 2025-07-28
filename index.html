@@ -120,45 +120,43 @@
       ]}
     ];
 
-    const aprobadas = new Set();
+     const completadas = new Set();
 
     function renderMalla() {
-      const contenedor = document.getElementById('contenedor');
-      contenedor.innerHTML = '';
+      const contenedor = document.getElementById("malla");
+      contenedor.innerHTML = "";
 
-      materias.forEach(periodo => {
-        const divPeriodo = document.createElement('div');
-        divPeriodo.className = 'periodo';
-        const titulo = document.createElement('div');
-        titulo.className = 'titulo-periodo';
+      datos.forEach(periodo => {
+        const div = document.createElement("div");
+        div.className = "periodo";
+
+        const titulo = document.createElement("h2");
         titulo.textContent = periodo.periodo;
+        div.appendChild(titulo);
 
-        const divMaterias = document.createElement('div');
-        divMaterias.className = 'materias';
+        periodo.clases.forEach(clase => {
+          const divClase = document.createElement("div");
+          divClase.className = "clase";
+          divClase.id = clase.codigo;
+          divClase.textContent = clase.nombre;
 
-        periodo.asignaturas.forEach(materia => {
-          const div = document.createElement('div');
-          div.className = 'materia';
-          div.textContent = `${materia.codigo}: ${materia.nombre}`;
+          const desbloqueada = !clase.prereq || clase.prereq.every(req => completadas.has(req));
+          if (!desbloqueada) divClase.classList.add("bloqueada");
+          else divClase.addEventListener("click", () => toggleClase(clase.codigo));
 
-          const requisitos = materia.requisitos || [];
-          const completa = requisitos.every(r => aprobadas.has(r));
-          if (!completa) div.classList.add('locked');
+          if (completadas.has(clase.codigo)) divClase.classList.add("completada");
 
-          if (completa) {
-            div.onclick = () => {
-              aprobadas.add(materia.codigo);
-              renderMalla();
-            };
-          }
-
-          divMaterias.appendChild(div);
+          div.appendChild(divClase);
         });
 
-        divPeriodo.appendChild(titulo);
-        divPeriodo.appendChild(divMaterias);
-        contenedor.appendChild(divPeriodo);
+        contenedor.appendChild(div);
       });
+    }
+
+    function toggleClase(codigo) {
+      if (completadas.has(codigo)) completadas.delete(codigo);
+      else completadas.add(codigo);
+      renderMalla();
     }
 
     renderMalla();
