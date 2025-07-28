@@ -1,71 +1,162 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Malla Interactiva - Economía UNAH</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fff0f5;
-      margin: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #d63384;
-    }
-    .semestre {
-      border: 2px solid #f8bbd0;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 15px auto;
-      max-width: 800px;
-      background-color: #ffe6f0;
-    }
-    .semestre h2 {
-      color: #b03060;
-    }
-    .materias {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .materia {
-      background-color: #fcd5ce;
-      border: 1px solid #f8c1cc;
-      border-radius: 8px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .materia:hover {
-      background-color: #f8c1cc;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Malla Curricular Interactiva - Todo Rosita</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #fff0f6; /* rosa muy suave */
+    color: #800040; /* rosa oscuro para texto */
+  }
+  h2 {
+    color: #cc0066; /* rosa fuerte */
+    text-align: center;
+  }
+  .materia {
+    border: 2px solid #ff66a3; /* borde rosa fuerte */
+    background-color: #ffd6e8; /* rosa claro */
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
+  .materia.aprobada {
+    background-color: #ff3399; /* rosa intenso */
+    color: white;
+    text-decoration: line-through;
+  }
+  .materia .requisitos {
+    font-size: 0.9em;
+    color: #b30059; /* rosa oscuro */
+    margin-top: 6px;
+  }
+  .materia .hijas {
+    margin-left: 25px;
+    margin-top: 12px;
+  }
+  input[type="checkbox"] {
+    transform: scale(1.3);
+    margin-right: 10px;
+    accent-color: #ff3399; /* checkbox rosa */
+    cursor: pointer;
+  }
+  label {
+    cursor: pointer;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
-  <h1>Malla Curricular - Economía UNAH</h1>
 
-  <div class="semestre">
-    <h2>Primer Período</h2>
-    <div class="materias">
-      <div class="materia">Matemática I</div>
-      <div class="materia">Contabilidad I</div>
-      <div class="materia">Introducción a la Economía</div>
-      <div class="materia">Español General</div>
-    </div>
-  </div>
+<h2>Malla Curricular - Carrera de Economía (Todo Rosita)</h2>
 
-  <div class="semestre">
-    <h2>Segundo Período</h2>
-    <div class="materias">
-      <div class="materia">Matemática II</div>
-      <div class="materia">Contabilidad II</div>
-      <div class="materia">Microeconomía I</div>
-      <div class="materia">Historia Económica de Honduras</div>
-    </div>
-  </div>
+<div id="malla"></div>
 
-  <!-- Puedes seguir agregando más periodos aquí -->
+<script>
+  const materias = [
+    { id: 'eco101', nombre: 'Introducción a la Economía', requisitos: [] },
+    { id: 'mat101', nombre: 'Matemáticas Básicas', requisitos: [] },
+    { id: 'eco201', nombre: 'Microeconomía', requisitos: ['eco101', 'mat101'] },
+    { id: 'eco202', nombre: 'Macroeconomía', requisitos: ['eco101'] },
+    { id: 'eco301', nombre: 'Economía Internacional', requisitos: ['eco201', 'eco202'] },
+  ];
+
+  const mallaDiv = document.getElementById('malla');
+
+  function crearMateria(materia, aprobadas) {
+    const div = document.createElement('div');
+    div.className = 'materia';
+    if (aprobadas.has(materia.id)) div.classList.add('aprobada');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = materia.id;
+    checkbox.checked = aprobadas.has(materia.id);
+
+    const label = document.createElement('label');
+    label.htmlFor = materia.id;
+    label.textContent = materia.nombre;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+
+    if (materia.requisitos.length > 0) {
+      const reqDiv = document.createElement('div');
+      reqDiv.className = 'requisitos';
+      reqDiv.textContent = 'Requisitos: ' + materia.requisitos.map(r => {
+        const mat = materias.find(m => m.id === r);
+        return mat ? mat.nombre : r;
+      }).join(', ');
+      div.appendChild(reqDiv);
+    }
+
+    const hijasDiv = document.createElement('div');
+    hijasDiv.className = 'hijas';
+    div.appendChild(hijasDiv);
+
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        aprobadas.add(materia.id);
+      } else {
+        quitarDependientes(materia.id, aprobadas);
+      }
+      actualizarMalla();
+    });
+
+    return div;
+  }
+
+  function quitarDependientes(id, aprobadas) {
+    aprobadas.delete(id);
+    const dependientes = materias.filter(m => m.requisitos.includes(id));
+    for (const dep of dependientes) {
+      if (aprobadas.has(dep.id)) {
+        quitarDependientes(dep.id, aprobadas);
+      }
+    }
+  }
+
+  function actualizarMalla() {
+    mallaDiv.innerHTML = '';
+    const aprobadas = new Set(window.aprobadas || []);
+
+    function mostrarDisponibles() {
+      let disponibles = [];
+
+      for (const materia of materias) {
+        if (aprobadas.has(materia.id)) {
+          disponibles.push(materia);
+          continue;
+        }
+        if (materia.requisitos.length === 0) {
+          disponibles.push(materia);
+          continue;
+        }
+        const todosRequisitosAprobados = materia.requisitos.every(r => aprobadas.has(r));
+        if (todosRequisitosAprobados) {
+          disponibles.push(materia);
+        }
+      }
+      return disponibles;
+    }
+
+    const disponibles = mostrarDisponibles();
+
+    window.aprobadas = aprobadas;
+
+    for (const materia of disponibles) {
+      const materiaDiv = crearMateria(materia, aprobadas);
+      mallaDiv.appendChild(materiaDiv);
+    }
+  }
+
+  window.aprobadas = new Set();
+
+  actualizarMalla();
+</script>
 
 </body>
 </html>
