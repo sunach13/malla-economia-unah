@@ -1,166 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Malla Curricular - Economía UNAH</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff0f6;
-      color: #800040;
-      margin: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #cc0066;
-    }
-
-    .grid {
-      display: flex;
-      gap: 20px;
-      overflow-x: auto;
-    }
-
-    .periodo {
-      min-width: 240px;
-      background-color: #ffe6f0;
-      border: 2px solid #ff99cc;
-      border-radius: 12px;
-      padding: 10px;
-    }
-
-    .periodo h2 {
-      text-align: center;
-      color: #cc0066;
-    }
-
-    .materia {
-      background-color: #ffd6e7;
-      border: 1px solid #ff66a3;
-      border-radius: 10px;
-      margin: 10px 0;
-      padding: 10px;
-      opacity: 0.5;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .materia.activa {
-      opacity: 1;
-    }
-
-    .materia label {
-      display: block;
-      font-weight: bold;
-      color: #99004d;
-    }
-
-    .requisitos {
-      font-size: 0.8em;
-      color: #cc0077;
-    }
-
-    input[type="checkbox"] {
-      margin-right: 5px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Malla Econ UNAH – Estilo Doogle</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#fff0f6; color:#800040; margin:20px; }
+  h1 { text-align:center; color:#cc0066; }
+  .grid { display:flex; gap:20px; overflow-x:auto; padding-bottom:20px; }
+  .periodo { min-width:260px; background:#ffd6e7; border:2px solid #ff99cc; border-radius:8px; padding:10px; position:relative; }
+  .periodo h2 { text-align:center; color:#cc0066; margin-bottom:10px; }
+  .materia { position:relative; background:#ffe6f0; border:1px solid #ff66a3; margin:8px 0; padding:8px; border-radius:6px; opacity:0.5; transition:opacity .2s, box-shadow .2s; }
+  .materia.activa { opacity:1; cursor:pointer; }
+  .materia:hover { box-shadow:0 0 8px rgba(204,0,102,0.6); }
+  .materia.aprobada { background:#ff3399; text-decoration:line-through; color:white; }
+  .materia label { display:block; font-weight:bold; color:#99004d; user-select:none; }
+  .requisitos { font-size:0.8em; color:#cc0077; margin-top:4px; }
+  input[type="checkbox"] { margin-right:5px; }
+  /* líneas visuales (opcional) */
+  svg.connector { position:absolute; top:0; left:0; pointer-events:none; overflow:visible; }
+</style>
 </head>
 <body>
-
-  <h1>Malla Curricular - Economía UNAH (Rosita 💖)</h1>
-
-  <div class="grid" id="malla"></div>
-
-  <script>
-    const materias = [
-      {
-        periodo: "PRIMER PERÍODO",
-        asignaturas: [
-          { codigo: "HH-101", nombre: "Historia de Honduras", uv: 4 },
-          { codigo: "FF-101", nombre: "Filosofía", uv: 4 },
-          { codigo: "DET-175", nombre: "Métodos Cuantitativos I", uv: 5 },
-          { codigo: "SC-101", nombre: "Sociología", uv: 4 },
-          { codigo: "EG-011", nombre: "Español General", uv: 4 }
-        ]
-      },
-      {
-        periodo: "SEGUNDO PERÍODO",
-        asignaturas: [
-          { codigo: "DAE-205", nombre: "Computación I", uv: 4 },
-          { codigo: "CE-020", nombre: "Principios de Economía", uv: 4 },
-          { codigo: "CF-014", nombre: "Contabilidad I", uv: 4 },
-          { codigo: "DET-280", nombre: "Métodos Cuantitativos II", uv: 5, requisitos: ["DET-175"] },
-          { codigo: "IN-101", nombre: "Inglés", uv: 4 }
-        ]
-      },
-      {
-        periodo: "TERCER PERÍODO",
-        asignaturas: [
-          { codigo: "CE-023", nombre: "Historia y Pensamiento Económico", uv: 4, requisitos: ["CE-020", "HH-101", "FF-101"] },
-          { codigo: "CE-040", nombre: "Microeconomía I", uv: 4, requisitos: ["CE-020", "DET-280"] },
-          { codigo: "CE-053", nombre: "Cuentas Nacionales", uv: 4, requisitos: ["CF-014", "CE-020"] },
-          { codigo: "DET-385", nombre: "Métodos Cuantitativos III", uv: 5, requisitos: ["DET-280"] },
-          { codigo: "EO-025", nombre: "Redacción General", uv: 3 }
-        ]
-      }
-      // Puedes seguir agregando los demás períodos igual
-    ];
-
-    const completadas = new Set();
-
-    function renderMalla() {
-      const contenedor = document.getElementById("malla");
-      contenedor.innerHTML = "";
-
-      materias.forEach(periodo => {
-        const col = document.createElement("div");
-        col.className = "periodo";
-
-        const h2 = document.createElement("h2");
-        h2.textContent = periodo.periodo;
-        col.appendChild(h2);
-
-        periodo.asignaturas.forEach(asig => {
-          const bloque = document.createElement("div");
-          bloque.className = "materia";
-          if (!asig.requisitos || asig.requisitos.every(r => completadas.has(r))) {
-            bloque.classList.add("activa");
-          }
-
-          const label = document.createElement("label");
-          label.innerHTML = `<input type="checkbox" data-codigo="${asig.codigo}"> ${asig.nombre}`;
-          bloque.appendChild(label);
-
-          if (asig.requisitos) {
-            const req = document.createElement("div");
-            req.className = "requisitos";
-            req.textContent = "Requiere: " + asig.requisitos.join(", ");
-            bloque.appendChild(req);
-          }
-
-          col.appendChild(bloque);
-        });
-
-        contenedor.appendChild(col);
-      });
-
-      // Agrega eventos de cambio
-      document.querySelectorAll("input[type='checkbox']").forEach(input => {
-        input.addEventListener("change", e => {
-          const code = e.target.dataset.codigo;
-          if (e.target.checked) {
-            completadas.add(code);
-          } else {
-            completadas.delete(code);
-          }
-          renderMalla(); // Re-renderiza para habilitar nuevas materias
-        });
-      });
+<h1>Malla Econ UNAH – Estilo Doogle</h1>
+<div class="grid" id="malla"></div>
+<!-- SVG para líneas -->
+<svg class="connector" id="svg"></svg>
+<script>
+  const materias = [
+    {
+      periodo:"PRIMER PERÍODO",
+      asignaturas:[
+        {codigo:"HH-101",nombre:"Historia de Honduras",requisitos:[]},
+        {codigo:"FF-101",nombre:"Filosofía",requisitos:[]},
+        {codigo:"DET-175",nombre:"Métodos Cuantitativos I",requisitos:[]},
+        {codigo:"SC-101",nombre:"Sociología",requisitos:[]},
+        {codigo:"EG-011",nombre:"Español General",requisitos:[]}
+      ]
+    },
+    {
+      periodo:"SEGUNDO PERÍODO",
+      asignaturas:[
+        {codigo:"DAE-205",nombre:"Computación I",requisitos:[]},
+        {codigo:"CE-020",nombre:"Principios de Economía",requisitos:[]},
+        {codigo:"CF-014",nombre:"Contabilidad I",requisitos:[]},
+        {codigo:"DET-280",nombre:"Métodos Cuantitativos II",requisitos:["DET-175"]},
+        {codigo:"IN-101",nombre:"Inglés",requisitos:[]}
+      ]
+    },
+    {
+      periodo:"TERCER PERÍODO",
+      asignaturas:[
+        {codigo:"CE-023",nombre:"Historia y Pensamiento Económico",requisitos:["CE-020","HH-101","FF-101"]},
+        {codigo:"CE-040",nombre:"Microeconomía I",requisitos:["CE-020","DET-280"]},
+        {codigo:"CE-053",nombre:"Cuentas Nacionales",requisitos:["CF-014","CE-020"]},
+        {codigo:"DET-385",nombre:"Métodos Cuantitativos III",requisitos:["DET-280"]},
+        {codigo:"EO-025",nombre:"Redacción General",requisitos:[]}
+      ]
     }
-
-    renderMalla();
-  </script>
+    // Agrega los demás períodos...
+  ];
+  const completadas = new Set();
+  const cont = document.getElementById("malla");
+  const svg = document.getElementById("svg");
+  
+  function render(){
+    cont.innerHTML="";
+    svg.innerHTML="";
+    materias.forEach((p,i)=>{
+      const col = document.createElement("div"); col.className="periodo";
+      col.dataset.periodo = i;
+      col.innerHTML = `<h2>${p.periodo}</h2>`;
+      p.asignaturas.forEach(as=>{
+        const m = document.createElement("div");
+        m.className="materia";
+        if(as.requisitos.every(r=>completadas.has(r))) m.classList.add("activa");
+        if(completadas.has(as.codigo)) m.classList.add("aprobada");
+        m.innerHTML = `<label><input type="checkbox" data-code="${as.codigo}" ${completadas.has(as.codigo)?"checked":""}>${as.nombre}</label>`;
+        if(as.requisitos.length){
+          m.innerHTML += `<div class="requisitos">Requiere: ${as.requisitos.join(", ")}</div>`;
+        }
+        col.appendChild(m);
+      });
+      cont.appendChild(col);
+    });
+    document.querySelectorAll(".materia input[type=checkbox]").forEach(cb=>{
+      cb.onchange = e=>{
+        const code = e.target.dataset.code;
+        if(e.target.checked) completadas.add(code);
+        else { completadas.delete(code); }
+        render();
+      };
+      const parent = cb.closest(".materia");
+      parent.onmouseover = ()=>highlightLinks(parent);
+      parent.onmouseout = ()=>render();
+    });
+  }
+  function highlightLinks(elem){
+    render();
+    const lbl = elem.querySelector("label input");
+    if(!lbl) return;
+    const code = lbl.dataset.code;
+    const rect = elem.getBoundingClientRect();
+    materias.forEach((p,i)=>{
+      p.asignaturas.forEach(as=>{
+        if(as.requisitos && as.requisitos.includes(code)){
+          const target = Array.from(document.querySelectorAll(".materia")).find(m=>m.querySelector(`input[data-code="${as.codigo}"]`));
+          if(target){
+            const r = target.getBoundingClientRect();
+            const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+            const x1 = rect.right - cont.scrollLeft;
+            const y1 = rect.top + rect.height/2 - cont.scrollTop;
+            const x2 = r.left - cont.scrollLeft;
+            const y2 = r.top + r.height/2 - cont.scrollTop;
+            line.setAttribute("x1",x1); line.setAttribute("y1",y1);
+            line.setAttribute("x2",x2); line.setAttribute("y2",y2);
+            line.setAttribute("stroke","#cc0066"); line.setAttribute("stroke-width","2");
+            svg.appendChild(line);
+          }
+        }
+      });
+    });
+  }
+  render();
+</script>
 </body>
 </html>
 
