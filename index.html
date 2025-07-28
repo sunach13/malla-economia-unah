@@ -1,194 +1,261 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Malla Econ UNAH – Estilo Doogle</title>
-<style>
-  body { font-family: Arial, sans-serif; background:#fff0f6; color:#800040; margin:20px; }
-  h1 { text-align:center; color:#cc0066; }
-  .grid { display:flex; gap:20px; overflow-x:auto; padding-bottom:20px; }
-  .periodo { min-width:260px; background:#ffd6e7; border:2px solid #ff99cc; border-radius:8px; padding:10px; position:relative; }
-  .periodo h2 { text-align:center; color:#cc0066; margin-bottom:10px; }
-  .materia { position:relative; background:#ffe6f0; border:1px solid #ff66a3; margin:8px 0; padding:8px; border-radius:6px; opacity:0.5; transition:opacity .2s, box-shadow .2s; }
-  .materia.activa { opacity:1; cursor:pointer; }
-  .materia:hover { box-shadow:0 0 8px rgba(204,0,102,0.6); }
-  .materia.aprobada { background:#ff3399; text-decoration:line-through; color:white; }
-  .materia label { display:block; font-weight:bold; color:#99004d; user-select:none; }
-  .requisitos { font-size:0.8em; color:#cc0077; margin-top:4px; }
-  input[type="checkbox"] { margin-right:5px; }
-  /* líneas visuales (opcional) */
-  svg.connector { position:absolute; top:0; left:0; pointer-events:none; overflow:visible; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Economía UNAH – SunSun ☀</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff0f6;
+      color: #800040;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #cc0066;
+    }
+    .grid {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
+    .periodo {
+      min-width: 260px;
+      background: #ffd6e7;
+      border: 2px solid #ff99cc;
+      border-radius: 8px;
+      padding: 10px;
+      position: relative;
+    }
+    .periodo h2 {
+      text-align: center;
+      color: #cc0066;
+      margin-bottom: 10px;
+    }
+    .materia {
+      position: relative;
+      background: #ffe6f0;
+      border: 1px solid #ff66a3;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 6px;
+      opacity: 0.5;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .materia.activa {
+      opacity: 1;
+      cursor: pointer;
+    }
+    .materia:hover {
+      box-shadow: 0 0 8px rgba(204, 0, 102, 0.6);
+    }
+    .materia.aprobada {
+      background: #ff3399;
+      text-decoration: line-through;
+      color: white;
+    }
+    .materia label {
+      display: block;
+      font-weight: bold;
+      color: #99004d;
+      user-select: none;
+    }
+    .requisitos {
+      font-size: 0.8em;
+      color: #cc0077;
+      margin-top: 4px;
+    }
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    svg.connector {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      overflow: visible;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 <body>
 <h1>Malla Econ UNAH – Estilo Doogle</h1>
 <div class="grid" id="malla"></div>
-<!-- SVG para líneas -->
 <svg class="connector" id="svg"></svg>
 <script>
   const materias = [
     {
-      periodo:"PRIMER PERÍODO",
-      asignaturas:[
-        {codigo:"HH-101",nombre:"Historia de Honduras",requisitos:[]},
-        {codigo:"FF-101",nombre:"Filosofía",requisitos:[]},
-        {codigo:"DET-175",nombre:"Métodos Cuantitativos I",requisitos:[]},
-        {codigo:"SC-101",nombre:"Sociología",requisitos:[]},
-        {codigo:"EG-011",nombre:"Español General",requisitos:[]}
+      periodo: "PRIMER PERÍODO",
+      asignaturas: [
+        { codigo: "HH-101", nombre: "Historia de Honduras", requisitos: [] },
+        { codigo: "FF-101", nombre: "Filosofía", requisitos: [] },
+        { codigo: "DET-175", nombre: "Métodos Cuantitativos I", requisitos: [] },
+        { codigo: "SC-101", nombre: "Sociología", requisitos: [] },
+        { codigo: "EG-011", nombre: "Español General", requisitos: [] }
       ]
     },
     {
-      periodo:"SEGUNDO PERÍODO",
-      asignaturas:[
-        {codigo:"DAE-205",nombre:"Computación I",requisitos:["DET-175"]},
-        {codigo:"CE-020",nombre:"Principios de Economía",requisitos:["DET-175"]},
-        {codigo:"CF-014",nombre:"Contabilidad I",requisitos:["DET-175"]},
-        {codigo:"DET-280",nombre:"Métodos Cuantitativos II",requisitos:["DET-175"]},
-        {codigo:"IN-101",nombre:"Inglés",requisitos:[]}
+      periodo: "SEGUNDO PERÍODO",
+      asignaturas: [
+        { codigo: "DAE-205", nombre: "Computación I", requisitos: ["DET-175"] },
+        { codigo: "CE-020", nombre: "Principios de Economía", requisitos: ["DET-175"] },
+        { codigo: "CF-014", nombre: "Contabilidad I", requisitos: ["DET-175"] },
+        { codigo: "DET-280", nombre: "Métodos Cuantitativos II", requisitos: ["DET-175"] },
+        { codigo: "IN-101", nombre: "Inglés", requisitos: [] }
       ]
     },
     {
-      periodo:"TERCER PERÍODO",
-      asignaturas:[
-        {codigo:"CE-023",nombre:"Historia y Pensamiento Económico",requisitos:["CE-020","HH-101","FF-101"]},
-        {codigo:"CE-040",nombre:"Microeconomía I",requisitos:["CE-020","DET-280"]},
-        {codigo:"CE-053",nombre:"Cuentas Nacionales",requisitos:["CF-014","CE-020"]},
-        {codigo:"DET-385",nombre:"Métodos Cuantitativos III",requisitos:["DET-280"]},
-        {codigo:"EO-025",nombre:"Redacción General",requisitos:[]}
+      periodo: "TERCER PERÍODO",
+      asignaturas: [
+        { codigo: "CE-023", nombre: "Historia y Pensamiento Económico", requisitos: ["CE-020", "HH-101", "FF-101"] },
+        { codigo: "CE-040", nombre: "Microeconomía I", requisitos: ["CE-020", "DET-280"] },
+        { codigo: "CE-053", nombre: "Cuentas Nacionales", requisitos: ["CF-014", "CE-020"] },
+        { codigo: "DET-385", nombre: "Métodos Cuantitativos III", requisitos: ["DET-280"] },
+        { codigo: "EO-025", nombre: "Redacción General", requisitos: [] }
+      ]
+    },
+    {
+      periodo: "CUARTO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-065", nombre: "Estadística Económica", requisitos: ["DET-280", "CE-053"] },
+        { codigo: "CE-075", nombre: "Macroeconomía", requisitos: ["CE-040"] },
+        { codigo: "CE-084", nombre: "Microeconomía II", requisitos: ["DET-385", "CE-040"] },
+        { codigo: "DET-390", nombre: "Métodos Cuantitativos IV", requisitos: ["DET-385"] },
+        { codigo: "BI-130", nombre: "Educación Ambiental", requisitos: [] },
+        { codigo: "RR-171-191", nombre: "Arte o deporte", requisitos: [] }
+      ]
+    },
+    {
+      periodo: "QUINTO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-094", nombre: "Met. y Técnicas de Investigación", requisitos: ["CE-065", "CE-075"] },
+        { codigo: "CE-106", nombre: "Estadística Económica II", requisitos: ["CE-065", "CE-075"] },
+        { codigo: "CE-118", nombre: "Economía Financiera", requisitos: ["CE-053", "CE-084"] },
+        { codigo: "CE-135", nombre: "Economía de los Recursos Humanos", requisitos: ["CE-075", "CE-084"] },
+        { codigo: "CE-131", nombre: "Macroeconomía II", requisitos: ["CE-075", "DET-390"] },
+        { codigo: "CF-030", nombre: "Métodos Cuantitativos en Finanzas I", requisitos: ["DET-280"] }
+      ]
+    },
+    {
+      periodo: "SEXTO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-147", nombre: "Preparación y Evaluación de Proyectos", requisitos: ["CE-118"] },
+        { codigo: "CE-157", nombre: "Economía Agrícola", requisitos: ["CE-118", "CE-131"] },
+        { codigo: "CE-166", nombre: "Moneda y Banca", requisitos: ["CE-131"] },
+        { codigo: "CE-176", nombre: "Finanzas Publicas", requisitos: ["CE-131"] },
+        { codigo: "CE-186", nombre: "Economía Matemática", requisitos: ["CE-084", "DET-390"] },
+        { codigo: "CF-050", nombre: "Métodos Cuantitativos en Finanzas II", requisitos: ["CF-030"] }
+      ]
+    },
+    {
+      periodo: "SÉPTIMO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-198", nombre: "Met. y Técnicas de Investigación II", requisitos: ["CE-094", "CE-106"] },
+        { codigo: "CE-207", nombre: "Economía de Recursos Naturales", requisitos: ["CE-157"] },
+        { codigo: "CE-217", nombre: "Econometría", requisitos: ["CE-186", "CE-106", "CE-131"] },
+        { codigo: "CE-227", nombre: "Integración Económica", requisitos: ["CE-166", "CE-176"] },
+        { codigo: "CE-237", nombre: "Economía de la Empresa", requisitos: ["CE-147"] }
+      ]
+    },
+    {
+      periodo: "OCTAVO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-248", nombre: "Teoría Econ. Avanzada", requisitos: ["CE-217"] },
+        { codigo: "CE-258", nombre: "Teoría y Polit. Comercio Internacional", requisitos: ["CE-227"] },
+        { codigo: "CE-268", nombre: "Economía Industrial", requisitos: ["CE-227"] },
+        { codigo: "CE-278", nombre: "Teoría y Tecn. Planificación", requisitos: ["CE-227"] },
+        { codigo: "CE-288", nombre: "Economía Política", requisitos: ["CE-227"] }
+      ]
+    },
+    {
+      periodo: "NOVENO PERÍODO",
+      asignaturas: [
+        { codigo: "CE-299", nombre: "Negocios Económicos Internacionales", requisitos: ["CE-258"] },
+        { codigo: "CE-309", nombre: "Análisis Económico de Honduras", requisitos: ["CE-248"] },
+        { codigo: "CE-319", nombre: "Teorías y Políticas del Desarrollo Económico", requisitos: ["CE-248"] },
+        { codigo: "CE-329", nombre: "Política Económica", requisitos: ["CE-288", "CE-248"] },
+        { codigo: "CE-339", nombre: "Taller de Investigación", requisitos: ["CE-309", "CE-329"] }
       ]
     }
-
-     {
-      periodo:"CUARTO PERÍODO",
-      asignaturas:[
-        {codigo:"CE-065",nombre:"Estadística Económica",requisitos:["DET-280","CE-053"]},
-        {codigo:"CE-075",nombre:"Macroeconomía",requisitos:["CE-040"]},
-        {codigo:"CE-084",nombre:"Microeconomía II",requisitos:["DET-385", "CE-040"]},
-        {codigo:"DET-390",nombre:"Métodos Cuantitativos IV",requisitos:["DET-385"]},
-        {codigo:"BI-130",nombre:"Educación Ambiental",requisitos:[]},
-        {codigo:"RR-171-191",nombre:"Arte o deporte",requisitos:[]}
-      ]
-    }
-   {
-      periodo:"QUINTO PERÍODO",
-      asignaturas:[
-        {codigo:"CE-094",nombre:"Met. y Técnicas de Investigación",requisitos:["CE-065", "CE-075"]},
-        {codigo:"CE-106",nombre:"Estadística Económica",requisitos:["CE-065", "CE-075"]},
-        {codigo:"CE-118",nombre:"Economía Financiera",requisitos:["CE-053","CE-084"]},
-        {codigo:"CE-135",nombre:"Economía de los Recursos Humanos",requisitos:["CE-075", "CE-084"]},
-        {codigo:"CE-131",nombre:"Macroeconomía II",requisitos:["CE-075", "DET-390"]},
-         {codigo:"CF-030",nombre:"Métodos Cuantitativos en Finanzas I",requisitos:["DET-280"]}
-      ]
-    }
-   {
-      periodo:"SEXTO PERÍODO",
-      asignaturas:[
-           {codigo:"CE-147",nombre:"Preparación y Evaluación de Proyectos",requisitos:["CE-118"]},
-        {codigo:"CE-157",nombre:"Economía Agrícola",requisitos:["CE-118", "CE-131"]},
-        {codigo:"CE-166",nombre:"Moneda y Banca",requisitos:["CE-131"]},
-        {codigo:"CE-176",nombre:"Finanzas Publicas",requisitos:["CE-131"]},
-        {codigo:"CE-186",nombre:"Economía Matemática",requisitos:["CE-084", "DET-390"]},
-         {codigo:"CF-050",nombre:"Métodos Cuantitativos en Finanzas I",requisitos:["CF-030"]}
-      ]
-      
-    }
-   {
-      periodo:"SÉPTIMO PERÍODO",
-      asignaturas:[
-        {codigo:"CE-198",nombre:"Met. y Técnicas de Investigación II",requisitos:["CE-094","CE-016"]},
-        {codigo:"CE-207",nombre:"Economía de Recursos Naturales",requisitos:["CE-157"]},
-        {codigo:"CE-217",nombre:"Econometría",requisitos:["CE-186","CE-106", "CE-131"]},
-        {codigo:"CE-227",nombre:"Integración Económica",requisitos:["CE-166", "CE-176"]},
-        {codigo:"CE-237",nombre:"Economía de la Empresa",requisitos:["CE-147"]}
-      ]
-    }
-   {
-      periodo:"OCTAVO PERÍODO",
-      asignaturas:[
-        {codigo:"CE-248",nombre:"Teoría Econ. Avanzada",requisitos:["CE-217"]},
-        {codigo:"CE-258",nombre:"Teoría y Polit. Comercio Internacional ",requisitos:["CE-227"]},
-        {codigo:"CE-268",nombre:"Economía Industrial",requisitos:["CE-227"]},
-        {codigo:"CE-278",nombre:"Teoría y Tecn. Planificación",requisitos:["CE-227"]},
-        {codigo:"CE-288",nombre:"Economía Política",requisitos:["CE-227"]}
-      ]
-    }
-   {
-      periodo:"NOVENO PERÍODO",
-      asignaturas:[
-        {codigo:"CE-299",nombre:"Negocios Económicos Internacionales",requisitos:["CE-258"]},
-        {codigo:"CE-309",nombre:"Análisis Económico de Honduras",requisitos:["CE-248"]},
-        {codigo:"CE-319",nombre:"Teorías y Políticas del Desarrollo Económico",requisitos:["CE-248"]},
-        {codigo:"CE-329",nombre:"Política Económica",requisitos:["CE-288", "CE-248"]},
-        {codigo:"CE-339",nombre:"Taller de Investigación",requisitos:["CE-309","CE-329"]}
-      ]
-    }
-    // Agrega los demás períodos...
   ];
+
   const completadas = new Set();
   const cont = document.getElementById("malla");
   const svg = document.getElementById("svg");
-  
-  function render(){
-    cont.innerHTML="";
-    svg.innerHTML="";
-    materias.forEach((p,i)=>{
-      const col = document.createElement("div"); col.className="periodo";
-      col.dataset.periodo = i;
+
+  function render() {
+    cont.innerHTML = "";
+    svg.innerHTML = "";
+    materias.forEach((p, i) => {
+      const col = document.createElement("div");
+      col.className = "periodo";
       col.innerHTML = `<h2>${p.periodo}</h2>`;
-      p.asignaturas.forEach(as=>{
+      p.asignaturas.forEach((as) => {
         const m = document.createElement("div");
-        m.className="materia";
-        if(as.requisitos.every(r=>completadas.has(r))) m.classList.add("activa");
-        if(completadas.has(as.codigo)) m.classList.add("aprobada");
-        m.innerHTML = `<label><input type="checkbox" data-code="${as.codigo}" ${completadas.has(as.codigo)?"checked":""}>${as.nombre}</label>`;
-        if(as.requisitos.length){
-          m.innerHTML += `<div class="requisitos">Requiere: ${as.requisitos.join(", ")}</div>`;
-        }
+        m.className = "materia";
+        if (as.requisitos.every((r) => completadas.has(r))) m.classList.add("activa");
+        if (completadas.has(as.codigo)) m.classList.add("aprobada");
+        m.innerHTML = `
+          <label><input type="checkbox" data-code="${as.codigo}" ${completadas.has(as.codigo) ? "checked" : ""}>${as.nombre}</label>
+          ${as.requisitos.length ? `<div class="requisitos">Requiere: ${as.requisitos.join(", ")}</div>` : ""}
+        `;
         col.appendChild(m);
       });
       cont.appendChild(col);
     });
-    document.querySelectorAll(".materia input[type=checkbox]").forEach(cb=>{
-      cb.onchange = e=>{
+
+    document.querySelectorAll(".materia input[type=checkbox]").forEach((cb) => {
+      cb.onchange = (e) => {
         const code = e.target.dataset.code;
-        if(e.target.checked) completadas.add(code);
-        else { completadas.delete(code); }
+        if (e.target.checked) completadas.add(code);
+        else completadas.delete(code);
         render();
       };
+
       const parent = cb.closest(".materia");
-      parent.onmouseover = ()=>highlightLinks(parent);
-      parent.onmouseout = ()=>render();
+      parent.onmouseover = () => highlightLinks(parent);
+      parent.onmouseout = () => render();
     });
   }
-  function highlightLinks(elem){
+
+  function highlightLinks(elem) {
     render();
     const lbl = elem.querySelector("label input");
-    if(!lbl) return;
+    if (!lbl) return;
     const code = lbl.dataset.code;
     const rect = elem.getBoundingClientRect();
-    materias.forEach((p,i)=>{
-      p.asignaturas.forEach(as=>{
-        if(as.requisitos && as.requisitos.includes(code)){
-          const target = Array.from(document.querySelectorAll(".materia")).find(m=>m.querySelector(`input[data-code="${as.codigo}"]`));
-          if(target){
+    materias.forEach((p) => {
+      p.asignaturas.forEach((as) => {
+        if (as.requisitos && as.requisitos.includes(code)) {
+          const target = Array.from(document.querySelectorAll(".materia")).find((m) =>
+            m.querySelector(`input[data-code="${as.codigo}"]`)
+          );
+          if (target) {
             const r = target.getBoundingClientRect();
-            const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             const x1 = rect.right - cont.scrollLeft;
-            const y1 = rect.top + rect.height/2 - cont.scrollTop;
+            const y1 = rect.top + rect.height / 2 - cont.scrollTop;
             const x2 = r.left - cont.scrollLeft;
-            const y2 = r.top + r.height/2 - cont.scrollTop;
-            line.setAttribute("x1",x1); line.setAttribute("y1",y1);
-            line.setAttribute("x2",x2); line.setAttribute("y2",y2);
-            line.setAttribute("stroke","#cc0066"); line.setAttribute("stroke-width","2");
+            const y2 = r.top + r.height / 2 - cont.scrollTop;
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2);
+            line.setAttribute("stroke", "#cc0066");
+            line.setAttribute("stroke-width", "2");
             svg.appendChild(line);
           }
         }
       });
     });
   }
+
   render();
 </script>
 </body>
 </html>
+
 
