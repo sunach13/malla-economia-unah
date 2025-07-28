@@ -1,57 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malla Curricular Economía UNAH</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malla Interactiva Economía</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       background-color: #ffe6f0;
+      color: #4a004d;
       margin: 0;
-      padding: 40px;
-      color: #800040;
+      padding: 2rem;
     }
     h1 {
-      text-align: center;
       color: #cc0066;
+      text-align: center;
+      margin-bottom: 2rem;
     }
     .periodo {
-      margin-bottom: 40px;
-    }
-    .titulo-periodo {
-      font-size: 1.5rem;
-      background-color: #ffb3d9;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .materias {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      margin-bottom: 2rem;
+      gap: 1rem;
     }
-    .materia {
-      background-color: #ffd6e7;
-      border: 2px solid #ff66a3;
-      border-radius: 8px;
-      padding: 15px;
-      width: 200px;
-      transition: all 0.3s;
+    .periodo h2 {
+      width: 100%;
+      color: #cc0066;
+      margin-bottom: 0.5rem;
+    }
+    .asignatura {
+      padding: 1rem;
+      border-radius: 12px;
+      background-color: #ffcce6;
       cursor: pointer;
+      transition: background-color 0.3s;
+      flex: 1 1 200px;
     }
-    .materia.locked {
-      opacity: 0.5;
+    .asignatura.habilitada {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .asignatura.inhabilitada {
+      opacity: 0.3;
       pointer-events: none;
+    }
+    .asignatura.aprobada {
+      background-color: #d63384;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>Malla Curricular Economía UNAH</h1>
+  <h1>Malla Interactiva - Economía</h1>
   <div id="contenedor"></div>
 
   <script>
-    const materias = [
+    const malla = [
       { periodo: "PRIMER PERÍODO", asignaturas: [
         { codigo: "HH-101", nombre: "Historia de Honduras", requisitos: [] },
         { codigo: "FF-101", nombre: "Filosofía", requisitos: [] },
@@ -120,46 +124,46 @@
       ]}
     ];
 
-     const completadas = new Set();
+    const aprobadas = new Set();
+    const contenedor = document.getElementById("contenedor");
 
-    function renderMalla() {
-      const contenedor = document.getElementById("malla");
+    function render() {
       contenedor.innerHTML = "";
+      malla.forEach(({ periodo, asignaturas }) => {
+        const periodoDiv = document.createElement("div");
+        periodoDiv.className = "periodo";
+        const h2 = document.createElement("h2");
+        h2.textContent = periodo;
+        periodoDiv.appendChild(h2);
 
-      datos.forEach(periodo => {
-        const div = document.createElement("div");
-        div.className = "periodo";
+        asignaturas.forEach((asig) => {
+          const card = document.createElement("div");
+          card.className = "asignatura";
+          card.textContent = `${asig.codigo} - ${asig.nombre}`;
 
-        const titulo = document.createElement("h2");
-        titulo.textContent = periodo.periodo;
-        div.appendChild(titulo);
+          const requisitosCumplidos = asig.requisitos.every(r => aprobadas.has(r));
+          card.classList.add(requisitosCumplidos ? "habilitada" : "inhabilitada");
+          if (aprobadas.has(asig.codigo)) card.classList.add("aprobada");
 
-        periodo.clases.forEach(clase => {
-          const divClase = document.createElement("div");
-          divClase.className = "clase";
-          divClase.id = clase.codigo;
-          divClase.textContent = clase.nombre;
+          if (requisitosCumplidos || aprobadas.has(asig.codigo)) {
+            card.addEventListener("click", () => {
+              if (aprobadas.has(asig.codigo)) {
+                aprobadas.delete(asig.codigo);
+              } else {
+                aprobadas.add(asig.codigo);
+              }
+              render();
+            });
+          }
 
-          const desbloqueada = !clase.prereq || clase.prereq.every(req => completadas.has(req));
-          if (!desbloqueada) divClase.classList.add("bloqueada");
-          else divClase.addEventListener("click", () => toggleClase(clase.codigo));
-
-          if (completadas.has(clase.codigo)) divClase.classList.add("completada");
-
-          div.appendChild(divClase);
+          periodoDiv.appendChild(card);
         });
 
-        contenedor.appendChild(div);
+        contenedor.appendChild(periodoDiv);
       });
     }
 
-    function toggleClase(codigo) {
-      if (completadas.has(codigo)) completadas.delete(codigo);
-      else completadas.add(codigo);
-      renderMalla();
-    }
-
-    renderMalla();
+    render();
   </script>
 </body>
 </html>
